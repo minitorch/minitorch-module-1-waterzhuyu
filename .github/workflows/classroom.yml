@@ -25,6 +25,9 @@ jobs:
           N802, N806" minitorch/ tests/ project/; mypy minitorch/*
         timeout: 10
         max-score: 10
+    - name: Check Python Version
+      run: |
+        python --version
     - name: Task 1.1
       id: task-1-1
       uses: education/autograding-command-grader@v1
