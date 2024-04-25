@@ -74,9 +74,10 @@ def topological_sort(variable: Variable) -> Iterable[Variable]:
 
     def _dfs(scalar: Variable) -> None:
         visited.append(scalar.unique_id)
-        for var in scalar.parents:
-            if var.unique_id not in visited:
-                _dfs(var)
+        if not scalar.is_constant():
+            for var in scalar.parents:
+                if var.unique_id not in visited:
+                    _dfs(var)
 
         reverse_order.append(scalar)
 
@@ -108,9 +109,12 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
             var.accumulate_derivative(intermediate[var.unique_id])
             continue
 
+        if var.is_constant():
+            continue
+
         ls = var.chain_rule(intermediate[var.unique_id])
-        for l, var_in in zip(ls, var.parents):
-            intermediate[var_in.unique_id] += l[1]  # ls: Tuple[Variable, float]
+        for var_in, deriv in ls:
+            intermediate[var_in.unique_id] += deriv  # ls: Tuple[Variable, float]
 
 
 @dataclass
