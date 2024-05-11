@@ -3,6 +3,7 @@ from typing import Callable, Tuple
 import pytest
 from hypothesis import given
 from hypothesis.strategies import DrawFn, composite, floats
+from strategies import assert_close, small_floats
 
 import minitorch
 from minitorch import (
@@ -12,8 +13,6 @@ from minitorch import (
     derivative_check,
     operators,
 )
-
-from .strategies import assert_close, small_floats
 
 
 @composite
@@ -118,3 +117,13 @@ def test_two_derivative(
 ) -> None:
     name, _, scalar_fn = fn
     derivative_check(scalar_fn, t1, t2)
+
+
+if __name__ == "__main__":
+    a = minitorch.scalar.Scalar(5)
+    b = 5
+    c = a + b
+    d = a + 5
+    c.backward()
+    d.backward()
+    print(a.derivative)

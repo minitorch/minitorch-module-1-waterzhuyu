@@ -73,11 +73,13 @@ def topological_sort(variable: Variable) -> Iterable[Variable]:
     reverse_order: List[Variable] = []
 
     def _dfs(scalar: Variable) -> None:
+        if scalar.is_constant() or scalar.unique_id in visited:
+            return
+
         visited.append(scalar.unique_id)
-        if not scalar.is_constant():
-            for var in scalar.parents:
-                if var.unique_id not in visited:
-                    _dfs(var)
+        for var in scalar.parents:
+            if var.unique_id not in visited:
+                _dfs(var)
 
         reverse_order.append(scalar)
 
